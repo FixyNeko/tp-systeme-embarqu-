@@ -7,6 +7,7 @@
  * It returns a file descriptor that you can use with open(2), write(2), close(2), ... (see `man 2 open`, etc)
  * If it returns -1, that means it has failed
  */
+
 int uart_open(char const*filename);
 
 #endif

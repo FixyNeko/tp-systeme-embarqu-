@@ -28,6 +28,3 @@ int tcp_connect(char *addr, char *port)
 
 	return fd;
 }
-
-// 192.168.102.249
-// 1337
