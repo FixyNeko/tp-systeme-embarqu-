@@ -15,3 +15,4 @@ void set_led(LEDS led);
 void clear_led(LEDS led);
 void switch_led(LEDS led);
 void blink_led(LEDS led);
+void *blink_led_thread(void *led);
