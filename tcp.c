@@ -28,3 +28,30 @@ int tcp_connect(char *addr, char *port)
 
 	return fd;
 }
+
+int teste_commande(char commande[TAILLE_COMMANDE], int* continuer)
+{
+	char* commande_base = strtok(commande, " ");
+
+	printf("La commande saisie est : %s\n", commande_base);
+
+	int operation = 0;	
+	
+	if(strncmp(commande_base, "quit" , 4) == 0)
+	{
+		*continuer = FALSE;
+
+		operation = -1;
+	}
+
+	else if(strncmp(commande_base, "send", 4) == 0)
+	{
+		char* utilisateur = strtok(NULL, " ");
+
+		printf("L'utilisateur est : %s\n", utilisateur);
+
+		operation = 1;
+	}
+
+	return operation;
+}

@@ -1,0 +1,5 @@
+enregistrer pseudo avec un nom --> OK
+envoyer un message a un destinataire --> OK
+lire les messages envoyés --> CUT LA PARTIE MESSAGE SI CELLE CI EST CORRECTE --> VERIFIER ACK
+lire les messages recus non lus -->
+lire les messages recus deja lus -->
