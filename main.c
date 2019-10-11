@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "tcp.h"
 
@@ -22,21 +23,29 @@ int main()
 
 		do
 		{
-			char commande[TAILLE_COMMANDE];
-			char result[TAILLE_COMMANDE]; //resultat de la commande
-
+			char commande[TAILLE_COMMANDE]; //Commande a saisir
+			char result[TAILLE_COMMANDE]; //Resultat de la commande
+			
+			
 			fgets(commande, TAILLE_COMMANDE, stdin);
 
-			int type_commande = teste_commande(commande, &continuer);
-
-			if(type_commande != -1)
+			if(strncmp(commande, "exit" , 4) != 0)
 			{
+				if(strncmp(commande, "send", 4) == 0)
+				{
+					ajouter_dans_fichier("message_envoye.txt", commande);
+				}
 
 				fprintf(fichier, "%s" ,commande);
 	
 				fgets(result, TAILLE_COMMANDE, fichier);
 		
 				fprintf(stdout, "%s", result);
+			}
+			
+			else
+			{
+				continuer = FALSE;
 			}
 
 		}while(continuer);

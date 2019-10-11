@@ -29,29 +29,81 @@ int tcp_connect(char *addr, char *port)
 	return fd;
 }
 
-int teste_commande(char commande[TAILLE_COMMANDE], int* continuer)
+void separe_commande_send(char commande[TAILLE_COMMANDE], char nom[TAILLE_NOM], char message[TAILLE_COMMANDE])
 {
-	char* commande_base = strtok(commande, " ");
+	int i = 5; //Lecture a partir du nom;
+	int ind_nom = 0; //Indice du nom
+	int ind_message = 0; //Indice du message
 
-	printf("La commande saisie est : %s\n", commande_base);
+	while(commande[i] != ' ')
+	{
+		nom[ind_nom] = commande[i];
+						
+		i++;
+		ind_nom++; //getline plus propre
+	}
+			
+	nom[ind_nom] = '\0';
 
-	int operation = 0;	
+	i++;
+
+	while(commande[i] != '\n')
+	{
+		message[ind_message] = commande[i];
+				
+		i++;
+		ind_message++;
+	}
+
+	message[ind_message] = '\0';
+
+	printf("DESTINATAIRE %s\nMESSAGE %s\n", nom, message);
+}
+
+int ajouter_dans_fichier(const char* nomFichier, char commande[TAILLE_COMMANDE])
+{
+	FILE* fichier = fopen(nomFichier, "a");
+
+	int a_ecrit = FALSE;
 	
-	if(strncmp(commande_base, "quit" , 4) == 0)
+	if(fichier)
 	{
-		*continuer = FALSE;
+		char nom[TAILLE_NOM];
+		char message[TAILLE_COMMANDE];
 
-		operation = -1;
-	}
+		a_ecrit = TRUE;
 
-	else if(strncmp(commande_base, "send", 4) == 0)
+		separe_commande_send(commande, nom, message);
+
+		fprintf(fichier ,"%s : %s\n", nom, message);
+
+		fclose(fichier);
+	}	
+
+	return a_ecrit;
+}
+
+int lecture_dans_fichier(const char* nomFichier)
+{
+	FILE* fichier = fopen(nomFichier, "r");
+
+	int a_lu = FALSE;
+
+	if(fichier)
 	{
-		char* utilisateur = strtok(NULL, " ");
+		a_lu = TRUE;
 
-		printf("L'utilisateur est : %s\n", utilisateur);
+		while(!feof(fichier))
+		{
+			char result[TAILLE_COMMANDE];
 
-		operation = 1;
-	}
+			fgets(result, TAILLE_COMMANDE , fichier);
 
-	return operation;
+			fprintf(stdout, "%s", result);
+		}
+
+		fclose(fichier);
+	}	
+
+	return a_lu;
 }
