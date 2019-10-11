@@ -2,7 +2,7 @@
 
 char ledsNumber[LEDS_NBR][3];
 char leds[LEDS_NBR][50];
-extern char ledsState[];
+char ledsState[LEDS_NBR] = {0};
 
 int main(int argc, char ** argv) {
 	
@@ -13,6 +13,10 @@ int main(int argc, char ** argv) {
 		switch_led(ROUGE);
 		usleep(100 * 1000);
 	}
+	
+	blink_led((blinkInfo) {.led = JAUNE, .period = 200});
+	
+	while(1);
 	
 	return 0;
 }
@@ -111,12 +115,17 @@ void switch_led(LEDS led) {
 	}
 }
 
-void blink_led(LEDS led) {
+void blink_led(blinkInfo info) {
 	pthread_t tid;
 	
-	pthread_create(&tid, NULL, blink_led_thread, &led);
+	pthread_create(&tid, NULL, blink_led_thread, &info);
 }
 
-void *blink_led_thread(void *led) {
+void *blink_led_thread(void *i) {
+	blinkInfo info = *((blinkInfo*)i);
 	
+	while(1) {
+		switch_led(info.led);
+		usleep(info.period * 1000);
+	}
 }
