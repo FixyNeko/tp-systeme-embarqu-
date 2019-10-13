@@ -26,7 +26,6 @@ int main()
 			char commande[TAILLE_COMMANDE]; //Commande a saisir
 			char result[TAILLE_COMMANDE]; //Resultat de la commande
 			
-			
 			fgets(commande, TAILLE_COMMANDE, stdin);
 
 			if(strncmp(commande, "exit" , 4) != 0)

@@ -1,0 +1,9 @@
+nicoco : bienvenue a tous
+luki : yo tout le monde
+paolo : ca va bien ?
+[2019-10-13 12:48:45] nicoco : bienvenue a tous
+[2019-10-13 12:48:45] luki : yo tout le monde
+[2019-10-13 12:48:45] paolo : ca va bien ?
+[2019-10-13 12:51:36] nicoco : bienvenue a tous
+[2019-10-13 12:51:36] luki : yo tout le monde
+[2019-10-13 12:51:36] paolo : ca va bien ?
