@@ -98,6 +98,9 @@ int ajouter_dans_fichier(const char* nomFichier, char commande[TAILLE_COMMANDE])
 
 		fprintf(fichier ,"[%s] %s : %s\n", date, nom, message);
 
+        free(nom);
+        free(message);
+
 		fclose(fichier);
 	}	
 
