@@ -4,6 +4,10 @@ char ledsNumber[LEDS_NBR][3];
 char leds[LEDS_NBR][50];
 char ledsState[LEDS_NBR] = {0};
 
+char ledsBlink[LEDS_NBR] = {0};
+pthread_cond_t ledsConds[LEDS_NBR];
+pthread_mutex_t ledsMutexs[LEDS_NBR];
+
 int main(int argc, char ** argv) {
 	
 	
@@ -14,9 +18,11 @@ int main(int argc, char ** argv) {
 		usleep(100 * 1000);
 	}
 	
-	blink_led((blinkInfo) {.led = JAUNE, .period = 200});
+	blink_led((blinkInfo) {.led = JAUNE, .period = 1500});
 	
-	while(1);
+	for(unsigned long int i = 0; i < 250000000; i++);
+	
+	clear_led(JAUNE);
 	
 	return 0;
 }
@@ -30,6 +36,9 @@ int init_leds() {
 	strcpy( ledsNumber[JAUNE] , "21");
 	
 	for(int i =  0; i < LEDS_NBR; i++) {
+		pthread_cond_init(ledsConds + i, NULL);
+		pthread_mutex_init(ledsMutexs + i, NULL);
+		
 		strcpy(fileName, gpioBaseFolder);
 		strcat(fileName, "export");
 		
@@ -83,6 +92,11 @@ void set_led(LEDS led) {
 	
 	fd = fopen(fileName, "w");
 	if(fd != NULL) {
+		pthread_mutex_lock(ledsMutexs + led);
+		ledsBlink[led] = 0;
+		pthread_cond_signal(ledsConds + led);
+		pthread_mutex_unlock(ledsMutexs + led);
+		
 		ledsState[led] = 1;
 		fputs("1", fd);
 		fclose(fd);
@@ -96,6 +110,11 @@ void clear_led(LEDS led) {
 	
 	fd = fopen(fileName, "w");
 	if(fd != NULL) {
+		pthread_mutex_lock(ledsMutexs + led);
+		ledsBlink[led] = 0;
+		pthread_cond_signal(ledsConds + led);
+		pthread_mutex_unlock(ledsMutexs + led);
+		
 		ledsState[led] = 0;
 		fputs("0", fd);
 		fclose(fd);
@@ -119,13 +138,31 @@ void blink_led(blinkInfo info) {
 	pthread_t tid;
 	
 	pthread_create(&tid, NULL, blink_led_thread, &info);
+	pthread_detach(tid); // should use pthread_attr_setdetachstate and launch in detached state
 }
 
 void *blink_led_thread(void *i) {
+	struct timespec timeToWait;
+	struct timeval tv;
 	blinkInfo info = *((blinkInfo*)i);
 	
-	while(1) {
+	ledsBlink[info.led] = 1;
+	
+	pthread_mutex_lock(ledsMutexs + info.led);
+	
+	while(ledsBlink[info.led]) {
 		switch_led(info.led);
-		usleep(info.period * 1000);
+		
+		printf("blink");
+		
+		gettimeofday(&tv, NULL);
+		timeToWait.tv_sec = time(NULL) + info.period / 1000;
+		timeToWait.tv_nsec = tv.tv_usec * 1000 + 1000 * 1000 * (info.period % 1000);
+		timeToWait.tv_sec += timeToWait.tv_nsec / (1000 * 1000 * 1000);
+		timeToWait.tv_nsec %= (1000 * 1000 * 1000);
+		
+		pthread_cond_timedwait(ledsConds + info.led, ledsMutexs + info.led, &timeToWait);
 	}
+	
+	pthread_mutex_unlock(ledsMutexs + info.led);
 }
