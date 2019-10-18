@@ -4,6 +4,7 @@
 #include <netdb.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -29,36 +30,59 @@ int tcp_connect(char *addr, char *port)
 	return fd;
 }
 
-void separe_commande_send(char commande[TAILLE_COMMANDE], char nom[TAILLE_NOM], char message[TAILLE_COMMANDE])
+char* separe_nom(char commande[TAILLE_COMMANDE])
 {
-	int i = 5; //Lecture a partir du nom;
-	int ind_nom = 0; //Indice du nom
-	int ind_message = 0; //Indice du message
+    int index0 = strchr(commande, ' ') - commande; 
+    int index1 = strchr(&(commande[5]), ' ') - commande;
 
-	while(commande[i] != ' ')
-	{
-		nom[ind_nom] = commande[i];
-						
-		i++;
-		ind_nom++; //getline plus propre
-	}
-			
-	nom[ind_nom] = '\0';
+    int taille_nom = index1 - index0;
 
-	i++;
+    char* nom = (char*)malloc(sizeof(char) * taille_nom);
 
-	while(commande[i] != '\n')
-	{
-		message[ind_message] = commande[i];
-				
-		i++;
-		ind_message++;
-	}
+    int i = 0;
 
-	message[ind_message] = '\0';
+    for(i = 0; i < taille_nom - 1; i++)
+    {
+        nom[i] = commande[i + index0 + 1];
+    }
 
-	printf("DESTINATAIRE %s\nMESSAGE %s\n", nom, message);
+    nom[i] = '\0';
+
+    return nom;
 }
+
+char* separe_message(char commande[TAILLE_COMMANDE])
+{
+    int index1 = strchr(&(commande[5]), ' ') - commande;
+    int index2 = strchr(&(commande[5]), '\n') - commande;
+
+    int taille_message = index2 - index1;
+
+    char* message = (char*)malloc(sizeof(char) * taille_message);
+
+    int i = 0;
+
+    for(i = 0; i < taille_message - 1; i++)
+    {
+        message[i] = commande[i + index1 + 1];
+    }
+
+    message[i] = '\0';
+
+    return message;
+}
+
+void date_toString(char date[TAILLE_DATE])
+{
+    time_t actTime;
+    struct tm *timeComp;
+ 
+    time(&actTime);
+    timeComp = localtime(&actTime);
+
+    sprintf(date, "%d-%02d-%02d %02d:%02d:%02d", timeComp->tm_year + 1900, timeComp->tm_mon + 1, timeComp->tm_mday, timeComp->tm_hour, timeComp->tm_min, timeComp->tm_sec);
+}
+
 
 int ajouter_dans_fichier(const char* nomFichier, char commande[TAILLE_COMMANDE])
 {
@@ -68,14 +92,18 @@ int ajouter_dans_fichier(const char* nomFichier, char commande[TAILLE_COMMANDE])
 	
 	if(fichier)
 	{
-		char nom[TAILLE_NOM];
-		char message[TAILLE_COMMANDE];
-
 		a_ecrit = TRUE;
 
-		separe_commande_send(commande, nom, message);
+		char* nom = separe_nom(commande);
+        	char* message = separe_message(commande);
+        	char date[TAILLE_DATE];
 
-		fprintf(fichier ,"%s : %s\n", nom, message);
+        	date_toString(date);
+
+		fprintf(fichier ,"[%s] %s : %s\n", date, nom, message);
+
+		free(nom);
+		free(message);
 
 		fclose(fichier);
 	}	
@@ -96,14 +124,21 @@ int lecture_dans_fichier(const char* nomFichier)
 		while(!feof(fichier))
 		{
 			char result[TAILLE_COMMANDE];
-
-			fgets(result, TAILLE_COMMANDE , fichier);
-
-			fprintf(stdout, "%s", result);
+		
+			if(fgets(result, TAILLE_COMMANDE , fichier))
+			{
+				fprintf(stdout, "%s", result);
+			}
 		}
 
 		fclose(fichier);
 	}	
 
 	return a_lu;
+}
+
+void affiche_menu()
+{
+	printf("------------------------------MENU--------------------------------\n\nTapez une des commandes ci-dessous :\n1-S'enregister avec un nom (nick nom).\n2-Lister les clients connectes (list).\n3-Envoyer un message a un destinataire (send destinataire message).\n4-Afficher les messages envoyes.\n5-Afficher les messages recu non lus.\n6-Afficher les messages recu deja lus.\n0-Quitter (exit).\n------------------------------------------------------------------\n\n");
+
 }

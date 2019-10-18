@@ -20,33 +20,75 @@ int main()
 	if(fichier) //On teste l'ouverture du fichier 
 	{
 		int continuer = TRUE; //Booleen qui sert a sortir de la boucle si le message envoye est "quit"
-
+		
 		do
 		{
-			char commande[TAILLE_COMMANDE]; //Commande a saisir
-			char result[TAILLE_COMMANDE]; //Resultat de la commande
-			
-			fgets(commande, TAILLE_COMMANDE, stdin);
+			int choix = 0;
 
-			if(strncmp(commande, "exit" , 4) != 0)
+			affiche_menu(); //Affichage du menu
+
+			do
 			{
-				if(strncmp(commande, "send", 4) == 0)
-				{
-					ajouter_dans_fichier("message_envoye.txt", commande);
-				}
+				scanf("%d%*c", &choix); //Saisie de la commande et on mange \n present dans le buffer
+			}while(choix > 6 || choix < 0);
 
-				fprintf(fichier, "%s" ,commande);
+			switch(choix)
+			{
+				case 0:
+					continuer = FALSE;
+					break;
+				case 1:
+					{
+						char commande[TAILLE_COMMANDE]; //Commande a saisir
+			
+						fgets(commande, TAILLE_COMMANDE, stdin);
+
+						fprintf(fichier, "%s" ,commande);
+					}
+
+					break;
 	
-				fgets(result, TAILLE_COMMANDE, fichier);
-		
-				fprintf(stdout, "%s", result);
-			}
+				case 2:
+					{
+						char commande[TAILLE_COMMANDE]; //Commande a saisir
+						char result[TAILLE_COMMANDE]; //Resultat de la commande
 			
-			else
-			{
-				continuer = FALSE;
-			}
+						fgets(commande, TAILLE_COMMANDE, stdin);
 
+						fprintf(fichier, "%s" ,commande);
+
+						fgets(result, TAILLE_COMMANDE, fichier);
+		
+						fprintf(stdout, "%s", result);
+					}
+			
+					break;
+
+				case 3:
+					{
+						char commande[TAILLE_COMMANDE]; //Commande a saisir
+			
+						fgets(commande, TAILLE_COMMANDE, stdin);
+
+						fprintf(fichier, "%s" ,commande);
+					
+						ajouter_dans_fichier("message_envoye.txt", commande);
+					}
+
+					break;
+
+				case 4:
+					lecture_dans_fichier("message_envoye.txt");
+					break;
+
+				case 5:
+					lecture_dans_fichier("message_recu_non_lu.txt");
+					break;
+				
+				case 6:
+					lecture_dans_fichier("message_recu_deja_lu.txt");
+					break;
+			}
 		}while(continuer);
 
 		fclose(fichier); //On ferme le fichier
@@ -54,4 +96,6 @@ int main()
 
 	return EXIT_SUCCESS;
 }
+
+
 
