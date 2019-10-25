@@ -29,33 +29,53 @@ int main()
 
 			do
 			{
+				printf("Faites un choix : ");
 				scanf("%d%*c", &choix); //Saisie de la commande et on mange \n present dans le buffer
+				printf("\n");
+
 			}while(choix > 6 || choix < 0);
 
 			switch(choix)
 			{
 				case 0:
 					continuer = FALSE;
+
 					break;
 				case 1:
 					{
-						char commande[TAILLE_COMMANDE]; //Commande a saisir
-			
-						fgets(commande, TAILLE_COMMANDE, stdin);
+						char commande[] = "nick";
+						char nom[TAILLE_NOM];
+						char* commande_concat = NULL;
 
-						fprintf(fichier, "%s" ,commande);
+						printf("Veuillez saisir un nom : ");
+
+						fgets(nom , TAILLE_NOM, stdin);
+						
+						printf("\n");
+
+						int taille_commande_reel = 5 + strlen(nom) + 1; //On rajoute \0
+
+						commande_concat = (char*)malloc(taille_commande_reel * sizeof(char)); 
+
+						snprintf(commande_concat, taille_commande_reel, "%s %s%c", commande, nom, '\0');
+
+						fprintf(fichier, "%s" ,commande_concat);
+
+						fflush(fichier);
+
+						free(commande_concat);
 					}
 
 					break;
 	
 				case 2:
 					{
-						char commande[TAILLE_COMMANDE]; //Commande a saisir
+						char commande[] = "list\n";
 						char result[TAILLE_COMMANDE]; //Resultat de la commande
-			
-						fgets(commande, TAILLE_COMMANDE, stdin);
 
 						fprintf(fichier, "%s" ,commande);
+								
+						fflush(fichier);
 
 						fgets(result, TAILLE_COMMANDE, fichier);
 		
@@ -66,13 +86,36 @@ int main()
 
 				case 3:
 					{
-						char commande[TAILLE_COMMANDE]; //Commande a saisir
-			
-						fgets(commande, TAILLE_COMMANDE, stdin);
+						char commande[] = "send";
+						char destinataire[TAILLE_NOM];
+						char message[TAILLE_MESSAGE];
+						char* commande_concat = NULL;
+
+						printf("Veuillez saisir le destinaire : ");
+
+						fgets(destinataire , TAILLE_NOM, stdin);
+
+						printf("\nVeuillez saisir votre message : ");
+						
+						fgets(message , TAILLE_MESSAGE, stdin);
+
+						printf("\n");
+
+						int taille_commande_reel = 5 + strlen(destinataire) + 1 + strlen(message) + 1; //On rajoute un espace et \0
+
+						commande_concat = (char*)malloc(taille_commande_reel * sizeof(char));
+						
+						destinataire[strlen(destinataire) - 1] = '\0';
+
+						snprintf(commande_concat, taille_commande_reel, "%s %s %s%c", commande, destinataire, message,'\0');
 
 						fprintf(fichier, "%s" ,commande);
+			
+						fflush(fichier);
 					
-						ajouter_dans_fichier("message_envoye.txt", commande);
+						ajouter_dans_fichier("message_envoye.txt", commande_concat);
+
+						free(commande_concat);
 					}
 
 					break;
@@ -87,6 +130,10 @@ int main()
 				
 				case 6:
 					lecture_dans_fichier("message_recu_deja_lu.txt");
+					break;
+				
+				default:
+					continuer = FALSE;
 					break;
 			}
 		}while(continuer);

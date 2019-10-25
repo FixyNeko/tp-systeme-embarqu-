@@ -30,7 +30,7 @@ int tcp_connect(char *addr, char *port)
 	return fd;
 }
 
-char* separe_nom(char commande[TAILLE_COMMANDE])
+char* separe_nom(char* commande)
 {
     int index0 = strchr(commande, ' ') - commande; 
     int index1 = strchr(&(commande[5]), ' ') - commande;
@@ -51,7 +51,7 @@ char* separe_nom(char commande[TAILLE_COMMANDE])
     return nom;
 }
 
-char* separe_message(char commande[TAILLE_COMMANDE])
+char* separe_message(char* commande)
 {
     int index1 = strchr(&(commande[5]), ' ') - commande;
     int index2 = strchr(&(commande[5]), '\n') - commande;
@@ -84,7 +84,7 @@ void date_toString(char date[TAILLE_DATE])
 }
 
 
-int ajouter_dans_fichier(const char* nomFichier, char commande[TAILLE_COMMANDE])
+int ajouter_dans_fichier(const char* nomFichier, char* commande)
 {
 	FILE* fichier = fopen(nomFichier, "a");
 
