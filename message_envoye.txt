@@ -1,2 +1,3 @@
-cheval : salut ca va
-lolo : enleve ta perruque
+[2019-10-18 17:19:40] cheval : bonjour
+[2019-10-18 17:19:48] cheval : salut
+[2019-10-18 17:19:56] cheval : au revoir

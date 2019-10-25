@@ -6,7 +6,7 @@
 #define PORT_LOG "4242"
 
 #define TAILLE_COMMANDE 4096
-#define TAILLE_NOM 25
+#define TAILLE_DATE 20
 
 #define TRUE 1
 #define FALSE 0
@@ -19,8 +19,11 @@
  */
 
 int tcp_connect(char* addr, char* port);
-void separe_commande_send(char commande[TAILLE_COMMANDE], char nom[TAILLE_NOM], char message[TAILLE_COMMANDE]);
+char* separe_nom(char commande[TAILLE_COMMANDE]);
+char* separe_message(char commande[TAILLE_COMMANDE]);
+void date_toString(char date[TAILLE_DATE]);
 int ajouter_dans_fichier(const char* nomFichier, char commande[TAILLE_COMMANDE]);
 int lecture_dans_fichier(const char* nomFichier);
+void affiche_menu();
 
 #endif
