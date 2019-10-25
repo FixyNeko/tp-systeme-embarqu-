@@ -7,6 +7,7 @@ char ledsState[LEDS_NBR] = {0};
 char ledsBlink[LEDS_NBR] = {0};
 pthread_cond_t ledsConds[LEDS_NBR];
 pthread_mutex_t ledsMutexs[LEDS_NBR];
+pthread_mutex_t blink;
 
 int main(int argc, char ** argv) {
 	
@@ -18,11 +19,10 @@ int main(int argc, char ** argv) {
 		usleep(100 * 1000);
 	}
 	
-	blink_led((blinkInfo) {.led = JAUNE, .period = 1500});
+	blinkInfo b = {.led = JAUNE, .period = 1500};
+	blink_led( b );
 	
-	for(unsigned long int i = 0; i < 250000000; i++);
-	
-	clear_led(JAUNE);
+	while(1);
 	
 	return 0;
 }
@@ -146,9 +146,10 @@ void *blink_led_thread(void *i) {
 	struct timeval tv;
 	blinkInfo info = *((blinkInfo*)i);
 	
-	ledsBlink[info.led] = 1;
+	pthread_mutex_unlock(&blink);
 	
-	pthread_mutex_lock(ledsMutexs + info.led);
+	
+	ledsBlink[info.led] = 1;
 	
 	while(ledsBlink[info.led]) {
 		switch_led(info.led);
@@ -165,4 +166,6 @@ void *blink_led_thread(void *i) {
 	}
 	
 	pthread_mutex_unlock(ledsMutexs + info.led);
+	
+	return NULL;
 }
