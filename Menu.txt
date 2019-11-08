@@ -1,0 +1,11 @@
+-------------------------------MENU--------------------------------
+Tapez une des commandes ci-dessous :
+1-S'enregister avec un nom.
+2-Lister les clients connectes.
+3-Envoyer un message a un destinataire.
+4-Afficher les messages envoyes.
+5-Afficher les messages recu non lus.
+6-Afficher les messages recu deja lus.
+0-Quitter.
+-------------------------------------------------------------------
+

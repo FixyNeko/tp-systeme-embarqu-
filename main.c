@@ -17,24 +17,24 @@ int main()
 	fprintf(stdout, "Connexion au serveur %s reussit\n", IP);
 
 	FILE* fichier = fdopen(fd, "r+"); //Creation d'un "fichier" a partir du fd
-	FILE* fichier_recevoir = fdopen(fd, "r+");
+	FILE* fichier_recevoir = fdopen(fd, "r+"); //Creation d'un "fichier numero 2" a partir du meme fd pour ecouter en permanence le serveur
 
 	if(fichier) //On teste l'ouverture du fichier 
 	{
 
 		int continuer = TRUE; //Booleen qui sert a sortir de la boucle si le message envoye est "quit"
  
-		struct reception r = {.fichier = fichier_recevoir, .continuer = &continuer};
+		struct reception r = {.fichier = fichier_recevoir, .continuer = &continuer}; //On initialise la structure a passer en parametre du thread
 	
-		pthread_t tid;
+		pthread_t tid; //Declaration du thread
 		
-		pthread_create(&tid, NULL, receive, &r);
+		pthread_create(&tid, NULL, receive, &r); //Initialisation du thread sur la fonction receive
 		
 		do
 		{
-			int choix = 0;
+			int choix = 0; //Choix dans le menu
 
-			affiche_menu(); //Affichage du menu
+			lecture_dans_fichier("Menu.txt"); //Affichage menu
 
 			do
 			{
@@ -47,7 +47,7 @@ int main()
 			switch(choix)
 			{
 				case 0:
-					continuer = FALSE;
+					continuer = FALSE; //On quitte le programme
 
 					break;
 				case 1:
@@ -66,11 +66,11 @@ int main()
 
 						commande_concat = (char*)malloc(taille_commande_reel * sizeof(char)); 
 
-						snprintf(commande_concat, taille_commande_reel, "%s %s%c", commande, nom, '\0');
+						snprintf(commande_concat, taille_commande_reel, "%s %s%c", commande, nom, '\0'); //Concatenation des chaines
 
 						fprintf(fichier, "%s" ,commande_concat);
 
-						fflush(fichier);
+						fflush(fichier); //On force l'ecriture
 
 						free(commande_concat);
 					}
@@ -84,7 +84,7 @@ int main()
 
 						fprintf(fichier, "%s" ,commande);
 								
-						fflush(fichier);
+						fflush(fichier); //On force l'ecriture
 
 						fgets(result, TAILLE_COMMANDE, fichier);
 		
@@ -114,15 +114,15 @@ int main()
 
 						commande_concat = (char*)malloc(taille_commande_reel * sizeof(char));
 						
-						destinataire[strlen(destinataire) - 1] = '\0';
+						destinataire[strlen(destinataire) - 1] = '\0'; //On remplace \n par \0
 
-						snprintf(commande_concat, taille_commande_reel, "%s %s %s%c", commande, destinataire, message,'\0');
+						snprintf(commande_concat, taille_commande_reel, "%s %s %s%c", commande, destinataire, message,'\0'); //Concatenation des strings
 
 						fprintf(fichier, "%s" ,commande);
 			
-						fflush(fichier);
+						fflush(fichier); //Force affichage
 					
-						ajouter_dans_fichier("message_envoye.txt", commande_concat);
+						ajouter_dans_fichier("message_envoye.txt", commande_concat); //On ajoute le message au fichier des messages envoyés
 
 						free(commande_concat);
 					}

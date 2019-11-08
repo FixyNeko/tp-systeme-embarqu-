@@ -36,7 +36,6 @@ char* separe_message(char commande[TAILLE_COMMANDE]);
 void date_toString(char date[TAILLE_DATE]);
 int ajouter_dans_fichier(const char* nomFichier, char* commande);
 int lecture_dans_fichier(const char* nomFichier);
-void affiche_menu();
 void* receive(void* r);
 int type_message_retour(char message_retour[TAILLE_MESSAGE]);
 

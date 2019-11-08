@@ -137,12 +137,6 @@ int lecture_dans_fichier(const char* nomFichier)
 	return a_lu;
 }
 
-void affiche_menu()
-{
-	printf("------------------------------MENU--------------------------------\n\nTapez une des commandes ci-dessous :\n1-S'enregister avec un nom.\n2-Lister les clients connectes.\n3-Envoyer un message a un destinataire.\n4-Afficher les messages envoyes.\n5-Afficher les messages recu non lus.\n6-Afficher les messages recu deja lus.\n0-Quitter.\n------------------------------------------------------------------\n\n");
-
-}
-
 void* receive(void* _r)
 {
 	struct reception* r = (struct reception*)_r;
