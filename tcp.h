@@ -13,6 +13,16 @@
 #define TRUE 1
 #define FALSE 0
 
+#define MESSAGE_SERVEUR 2
+#define MESSAGE_UTILISATEUR 3
+
+struct reception
+{
+	FILE* fichier;
+	int* continuer;
+	char message_retour[TAILLE_MESSAGE];
+};
+
 /*
  * This function is to help you to connect to the server.
  * Its parameters are an IP address, like "172.16.32.27" and a port, like "1337"
@@ -27,5 +37,7 @@ void date_toString(char date[TAILLE_DATE]);
 int ajouter_dans_fichier(const char* nomFichier, char* commande);
 int lecture_dans_fichier(const char* nomFichier);
 void affiche_menu();
+void* receive(void* r);
+int type_message_retour(char message_retour[TAILLE_MESSAGE]);
 
 #endif

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <pthread.h>
 
 #include "tcp.h"
 
@@ -15,11 +16,19 @@ int main()
 
 	fprintf(stdout, "Connexion au serveur %s reussit\n", IP);
 
-	FILE* fichier = fdopen(fd, "r+"); //Creation d'un "fichier" a partir du fd 
+	FILE* fichier = fdopen(fd, "r+"); //Creation d'un "fichier" a partir du fd
+	FILE* fichier_recevoir = fdopen(fd, "r+");
 
 	if(fichier) //On teste l'ouverture du fichier 
 	{
+
 		int continuer = TRUE; //Booleen qui sert a sortir de la boucle si le message envoye est "quit"
+ 
+		struct reception r = {.fichier = fichier_recevoir, .continuer = &continuer};
+	
+		pthread_t tid;
+		
+		pthread_create(&tid, NULL, receive, &r);
 		
 		do
 		{

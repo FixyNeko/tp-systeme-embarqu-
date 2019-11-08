@@ -139,6 +139,35 @@ int lecture_dans_fichier(const char* nomFichier)
 
 void affiche_menu()
 {
-	printf("------------------------------MENU--------------------------------\n\nTapez une des commandes ci-dessous :\n1-S'enregister avec un nom (nick nom).\n2-Lister les clients connectes (list).\n3-Envoyer un message a un destinataire (send destinataire message).\n4-Afficher les messages envoyes.\n5-Afficher les messages recu non lus.\n6-Afficher les messages recu deja lus.\n0-Quitter (exit).\n------------------------------------------------------------------\n\n");
+	printf("------------------------------MENU--------------------------------\n\nTapez une des commandes ci-dessous :\n1-S'enregister avec un nom.\n2-Lister les clients connectes.\n3-Envoyer un message a un destinataire.\n4-Afficher les messages envoyes.\n5-Afficher les messages recu non lus.\n6-Afficher les messages recu deja lus.\n0-Quitter.\n------------------------------------------------------------------\n\n");
 
 }
+
+void* receive(void* _r)
+{
+	struct reception* r = (struct reception*)_r;
+
+	while(*r->continuer == TRUE)
+	{
+		fgets(r->message_retour, TAILLE_MESSAGE, r->fichier);
+
+		if(type_message_retour(r->message_retour) == MESSAGE_SERVEUR)
+		{
+			//PIPE
+		}
+
+		else
+		{
+			//MESSAGE UTILSATEUR
+		}
+	}
+
+	return NULL;
+}
+
+int type_message_retour(char message_retour[TAILLE_MESSAGE])
+{
+	return (strncmp(message_retour, "recv", 4) == 0) ? MESSAGE_UTILISATEUR : MESSAGE_SERVEUR; 
+}
+
+
