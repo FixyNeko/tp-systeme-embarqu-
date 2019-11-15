@@ -164,4 +164,37 @@ int type_message_retour(char message_retour[TAILLE_MESSAGE])
 	return (strncmp(message_retour, "recv", 4) == 0) ? MESSAGE_UTILISATEUR : MESSAGE_SERVEUR; 
 }
 
+void nickError(char code_erreur)
+{
+	switch(code_erreur)
+	{
+		case '2':
+			fprintf(stdout, "Il manque un argument\n");
+			break;
+		case '3':
+			fprintf(stdout, "Nom deja utilise\n");
+			break;
+		case '4':	
+			fprintf(stdout, "Nom invalide\n");
+			break;
+	}
+}
 
+void sendError(char code_erreur)
+{
+	switch(code_erreur)
+	{
+		case '2':
+			fprintf(stdout, "Il manque un ou des argument(s)\n");
+			break;
+		case '5':
+			fprintf(stdout, "L'expediteur n'as pas de nom\n");
+			break;
+		case '6':	
+			fprintf(stdout, "Le destinataire est inconnu\n");
+			break;
+		case '7':	
+			fprintf(stdout, "Message invalide\n");
+			break;
+	}
+}

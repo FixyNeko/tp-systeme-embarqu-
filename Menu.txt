@@ -6,6 +6,6 @@ Tapez une des commandes ci-dessous :
 4-Afficher les messages envoyes.
 5-Afficher les messages recu non lus.
 6-Afficher les messages recu deja lus.
-0-Quitter.
+-1-Quitter.
 -------------------------------------------------------------------
 
