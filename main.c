@@ -8,9 +8,6 @@ int main()
 {
 	#ifdef RASP
 	init_leds();
-	clear_led(ROUGE);
-			blinkInfo b = {.led = VERT, .period = 1500};
-			blink_led( b );
 	#endif
 	
 	int fd;  //Ouverture du File descriptor
