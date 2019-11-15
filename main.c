@@ -1,8 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <pthread.h>
-
 #include "tcp.h"
 
 int main()
@@ -19,12 +14,15 @@ int main()
 	FILE* fichier = fdopen(fd, "r+"); //Creation d'un "fichier" a partir du fd
 	FILE* fichier_recevoir = fdopen(fd, "r+"); //Creation d'un "fichier numero 2" a partir du meme fd pour ecouter en permanence le serveur
 
-	if(fichier) //On teste l'ouverture du fichier 
-	{
-
+	if(fichier && fichier_recevoir) //On teste l'ouverture du fichier 
+	{	
 		int continuer = TRUE; //Booleen qui sert a sortir de la boucle si le message envoye est "quit"
- 
-		struct reception r = {.fichier = fichier_recevoir, .continuer = &continuer}; //On initialise la structure a passer en parametre du thread
+
+		int io_pipe[2]; //Tableau pour le pipe
+
+		pipe(io_pipe); //io_pipe[0] --> sortie io_pipe[1] --> entree
+
+		struct reception r = {.fichier = fichier_recevoir, .continuer = &continuer, .pipe_entree = io_pipe[1]};
 	
 		pthread_t tid; //Declaration du thread
 		
@@ -54,6 +52,7 @@ int main()
 					{
 						char commande[] = "nick";
 						char nom[TAILLE_NOM];
+						char reponse_serveur[TAILLE_MESSAGE] = {0};
 						char* commande_concat = NULL;
 
 						printf("Veuillez saisir un nom : ");
@@ -73,6 +72,10 @@ int main()
 						fflush(fichier); //On force l'ecriture
 
 						free(commande_concat);
+
+						read(io_pipe[0], reponse_serveur, TAILLE_MESSAGE);
+
+						fprintf(stdout, "%s", reponse_serveur);
 					}
 
 					break;
@@ -80,15 +83,15 @@ int main()
 				case 2:
 					{
 						char commande[] = "list\n";
-						char result[TAILLE_COMMANDE]; //Resultat de la commande
+						char reponse_serveur[TAILLE_MESSAGE] = {0};
 
 						fprintf(fichier, "%s" ,commande);
 								
 						fflush(fichier); //On force l'ecriture
 
-						fgets(result, TAILLE_COMMANDE, fichier);
-		
-						fprintf(stdout, "%s", result);
+						read(io_pipe[0], reponse_serveur, TAILLE_MESSAGE);
+
+						fprintf(stdout, "%s", reponse_serveur);
 					}
 			
 					break;
@@ -97,8 +100,9 @@ int main()
 					{
 						char commande[] = "send";
 						char destinataire[TAILLE_NOM];
-						char message[TAILLE_MESSAGE];
+						char message[TAILLE_MESSAGE] = {0};
 						char* commande_concat = NULL;
+						char reponse_serveur[TAILLE_MESSAGE];
 
 						printf("Veuillez saisir le destinaire : ");
 
@@ -118,13 +122,15 @@ int main()
 
 						snprintf(commande_concat, taille_commande_reel, "%s %s %s%c", commande, destinataire, message,'\0'); //Concatenation des strings
 
-						fprintf(fichier, "%s" ,commande);
+						fprintf(fichier, "%s" , commande_concat);
 			
 						fflush(fichier); //Force affichage
 					
 						ajouter_dans_fichier("message_envoye.txt", commande_concat); //On ajoute le message au fichier des messages envoyés
 
 						free(commande_concat);
+
+						//read(io_pipe[0], reponse_serveur, TAILLE_MESSAGE);
 					}
 
 					break;
@@ -147,11 +153,12 @@ int main()
 			}
 		}while(continuer);
 
+		
+		close(io_pipe[0]);
+		close(io_pipe[1]);
+
 		fclose(fichier); //On ferme le fichier
 	}
 
 	return EXIT_SUCCESS;
 }
-
-
-

@@ -147,12 +147,12 @@ void* receive(void* _r)
 
 		if(type_message_retour(r->message_retour) == MESSAGE_SERVEUR)
 		{
-			//PIPE
+			write(r->pipe_entree, r->message_retour, strlen(r->message_retour));
 		}
 
 		else
 		{
-			//MESSAGE UTILSATEUR
+			ajouter_dans_fichier("message_recu_non_lu.txt", r->message_retour);
 		}
 	}
 

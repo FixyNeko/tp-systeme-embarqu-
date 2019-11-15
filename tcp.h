@@ -1,6 +1,12 @@
 #ifndef TCP_H
 #define TCP_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <pthread.h>
+#include <unistd.h>
+
 #define IP "192.168.102.249"
 #define PORT "1337"
 #define PORT_LOG "4242"
@@ -21,6 +27,7 @@ struct reception
 	FILE* fichier;
 	int* continuer;
 	char message_retour[TAILLE_MESSAGE];
+	int pipe_entree;
 };
 
 /*
