@@ -12,6 +12,10 @@
 
 #include "tcp.h"
 
+#ifdef RASP
+#include "led.h"
+#endif
+
 #define ERROR_IF(F) if(F) { perror(#F); exit(errno); }
 
 int tcp_connect(char *addr, char *port) 
@@ -153,6 +157,11 @@ void* receive(void* _r)
 		else
 		{
 			ajouter_dans_fichier("message_recu_non_lu.txt", r->message_retour);
+			
+			#ifdef RASP
+			blinkInfo b = {.led = VERT, .period = 300};
+			blink_led( b );
+			#endif
 		}
 	}
 

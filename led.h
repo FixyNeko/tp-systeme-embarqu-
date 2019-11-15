@@ -1,15 +1,19 @@
+#ifndef LED_DEF
+#define LED_DEF
+
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 #include <pthread.h>
 #include <sys/time.h>
+#include <stdlib.h>
 
 
 typedef enum {ROUGE = 0, VERT, JAUNE, LEDS_NBR} LEDS;
 
 typedef struct {LEDS led; int period;} blinkInfo;
 
-const char gpioBaseFolder[] = "/sys/class/gpio/";
+extern const char gpioBaseFolder[];
 
 extern char ledsState[];
 
@@ -25,3 +29,5 @@ void clear_led(LEDS led);
 void switch_led(LEDS led);
 void blink_led(blinkInfo info);
 void *blink_led_thread(void *led);
+
+#endif

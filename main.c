@@ -1,7 +1,18 @@
 #include "tcp.h"
 
+#ifdef RASP
+#include "led.h"
+#endif
+
 int main()
 {
+	#ifdef RASP
+	init_leds();
+	clear_led(ROUGE);
+			blinkInfo b = {.led = VERT, .period = 1500};
+			blink_led( b );
+	#endif
+	
 	int fd;  //Ouverture du File descriptor
 
 	while((fd = tcp_connect(IP, PORT)) == -1) //On teste la connection au serveur 
@@ -141,6 +152,12 @@ int main()
 
 				case 5:
 					lecture_dans_fichier("message_recu_non_lu.txt");
+					
+					
+					#ifdef RASP
+					clear_led(VERT);
+					#endif
+					
 					break;
 				
 				case 6:

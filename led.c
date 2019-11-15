@@ -1,4 +1,7 @@
+#ifdef RASP
 #include "led.h"
+
+const char gpioBaseFolder[] = "/sys/class/gpio/";
 
 char ledsNumber[LEDS_NBR][3];
 char leds[LEDS_NBR][50];
@@ -9,6 +12,7 @@ pthread_cond_t ledsConds[LEDS_NBR];
 pthread_mutex_t ledsMutexs[LEDS_NBR];
 pthread_mutex_t blink;
 
+/*
 int main(int argc, char ** argv) {
 	
 	
@@ -26,6 +30,7 @@ int main(int argc, char ** argv) {
 	
 	return 0;
 }
+*/
 
 int init_leds() {
 	char fileName[50] = {0};
@@ -134,17 +139,32 @@ void switch_led(LEDS led) {
 	}
 }
 
-void blink_led(blinkInfo info) {
+void blink_led(blinkInfo _info) {
 	pthread_t tid;
 	
-	pthread_create(&tid, NULL, blink_led_thread, &info);
+	printf("info.period: %d\n", _info.period);
+	
+	blinkInfo *info = malloc(sizeof(blinkInfo));
+	info->led = _info.led;
+	info->period = _info.period;
+	
+	pthread_mutex_lock(&blink);
+	
+	pthread_create(&tid, NULL, blink_led_thread, info);
 	pthread_detach(tid); // should use pthread_attr_setdetachstate and launch in detached state
 }
 
 void *blink_led_thread(void *i) {
 	struct timespec timeToWait;
 	struct timeval tv;
-	blinkInfo info = *((blinkInfo*)i);
+	
+	blinkInfo info;
+	info.led = ((blinkInfo*) i)->led;
+	info.period = ((blinkInfo*) i)->period;
+	
+	free(i);
+	
+	printf("info.period thread: %d", info.period);
 	
 	pthread_mutex_unlock(&blink);
 	
@@ -154,14 +174,14 @@ void *blink_led_thread(void *i) {
 	while(ledsBlink[info.led]) {
 		switch_led(info.led);
 		
-		printf("blink");
-		
 		gettimeofday(&tv, NULL);
-		timeToWait.tv_sec = time(NULL) + info.period / 1000;
-		timeToWait.tv_nsec = tv.tv_usec * 1000 + 1000 * 1000 * (info.period % 1000);
-		timeToWait.tv_sec += timeToWait.tv_nsec / (1000 * 1000 * 1000);
-		timeToWait.tv_nsec %= (1000 * 1000 * 1000);
-		
+		timeToWait.tv_sec = tv.tv_sec + info.period / 1000;
+		timeToWait.tv_nsec = tv.tv_usec * 1000 + 1000000 * (info.period % 1000);
+		timeToWait.tv_sec += timeToWait.tv_nsec / (1000000000);
+		timeToWait.tv_nsec %= (1000000000);
+		/*
+		printf("temps reception: %d temps debloquage: %d info.period: %d\n", tv.tv_usec/1000, timeToWait.tv_nsec/1000000, info.period);
+		*/
 		pthread_cond_timedwait(ledsConds + info.led, ledsMutexs + info.led, &timeToWait);
 	}
 	
@@ -169,3 +189,4 @@ void *blink_led_thread(void *i) {
 	
 	return NULL;
 }
+#endif

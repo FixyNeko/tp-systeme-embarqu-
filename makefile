@@ -1,10 +1,13 @@
 COMPILATEUR = gcc
-FLAG = -Wall -Wextra -pthread
-C_FILE = main.c tcp.c
+FLAG = -Wall -Wextra -pthread -g
+C_FILE = main.c tcp.c led.c
 
-reseau : $(C_FILE)
-	$(COMPILATEUR) $(C_FILE) -o reseau $(FLAG)
+all: pc rasp
 
+pc : $(C_FILE)
+	$(COMPILATEUR) $(C_FILE) -o pc $(FLAG)
 
+rasp: $(C_FILE)
+	$(COMPILATEUR) -D RASP $(C_FILE) -o rasp $(FLAG)
 	
 	
