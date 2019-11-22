@@ -40,7 +40,7 @@ void sendError(char code_erreur);
  * \author Nicolas LOXOL et Felix DHUMES
  * \version 1.0
  * \date 15/11/2019
- * 
+ *
  * Ensemble de fonctions permattant de communiquer avec le serveur.
  * Cela inclut une ecoute permanente de celui-ci et la possibilitee
  * d'executer certaines commandes a sa destination.
@@ -151,7 +151,7 @@ void sendError(char code_erreur);
  * \fn int ajouter_dans_fichier(const char* nomFichier, char* commande)
  * \brief Ajoute une chaine formatee dans un fichier texte.
  * \param nomFichier Le nom du fichier texte present sous forme de chaine de caractere.
- * \param commande La commande saisit par l'utilisateur (heure / nom utilisateur / message).
+ * \param commande La commande saisie par l'utilisateur (heure / nom utilisateur / message).
  * \return Retourne un booleen qui permet de savoir si l'ecriture a fonctionné.
  */
 
